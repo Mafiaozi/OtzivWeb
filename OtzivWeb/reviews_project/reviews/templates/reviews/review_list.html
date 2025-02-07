@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отзывы</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+            color: #333;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            width: 100%;
+            padding: 15px 0;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 20px;
+            width: 80%;
+            max-width: 500px;
+            margin-top: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h2 {
+            text-align: center;
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .form-container label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-container input, .form-container textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-container input:focus, .form-container textarea:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        .form-container button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .form-container button:hover {
+            background-color: #45a049;
+        }
+
+        .reviews-container {
+            width: 100%;
+            max-width: 500px;
+            margin-top: 40px;
+            padding: 20px;
+        }
+
+        .review {
+            background-color: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .review strong {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .review p {
+            font-size: 14px;
+            color: #555;
+            margin-top: 8px;
+        }
+
+        footer {
+            margin-top: 50px;
+            padding: 15px;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            width: 100%;
+        }
+
+        footer p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Отзывы о нашем сайте</h1>
+</header>
+
+<div class="form-container">
+    <h2>Оставьте свой отзыв</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label for="name">Ваше имя:</label>
+        <input type="text" name="name" id="name" placeholder="Как вас зовут?" required>
+
+        <label for="text">Ваш отзыв:</label>
+        <textarea name="text" id="text" placeholder="Что вам понравилось?" rows="4" required></textarea>
+
+        <button type="submit">Отправить</button>
+    </form>
+</div>
+
+<div class="reviews-container">
+    <h2>Все отзывы:</h2>
+    {% for review in reviews %}
+        <div class="review">
+            <strong>{{ review.name }}</strong>
+            <p>{{ review.text }}</p>
+        </div>
+    {% empty %}
+        <p>Пока нет отзывов. Будьте первым!</p>
+    {% endfor %}
+</div>
+
+<footer>
+    <p>© 2025 MadeByMafiozi | Все права защищены (нет)</p>
+</footer>
+
+</body>
+</html>
