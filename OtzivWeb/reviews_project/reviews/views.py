@@ -4,10 +4,10 @@ reviews = []
 
 def review_list(request):
     if request.method == "POST":
-        name = request.POST.get("name")  # Получаем имя пользователя из формы
-        text = request.POST.get("text")  # Получаем текст отзыва из формы
+        name = request.POST.get("name")  
+        text = request.POST.get("text") 
         if name and text:
-            reviews.append({"name": name, "text": text})  # Добавляем отзыв в список
-        return redirect("review_list")  # Перенаправляем на ту же страницу
+            reviews.append({"name": name, "text": text})  
+        return redirect("review_list")  
 
-    return render(request, "reviews/review_list.html", {"reviews": reviews})  # Отображаем страницу с отзывами
+    return render(request, "reviews/review_list.html", {"reviews": reviews})  
