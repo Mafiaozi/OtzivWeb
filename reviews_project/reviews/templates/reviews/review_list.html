@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отзывы о нашем сайте</title>
+    <script src="https://www.google.com/recaptcha/api.js " async defer></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            width: 100%;
+            padding: 15px 0;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .auth-links {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .auth-links a {
+            color: white;
+            margin-left: 10px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: opacity 0.3s;
+        }
+
+        .auth-links a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 25px;
+            width: 90%;
+            max-width: 600px;
+            margin: 30px auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .form-container h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-container input,
+        .form-container textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        .form-container input:focus,
+        .form-container textarea:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        .form-container button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        .form-container button:hover {
+            background-color: #45a049;
+        }
+
+        .reviews-container {
+            width: 90%;
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .review {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .review-author {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .review-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .delete-btn {
+            color: #ff5555;
+            text-decoration: none;
+            font-size: 14px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .delete-btn:hover {
+            text-decoration: underline;
+        }
+
+        .review-text {
+            color: #555;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .review-meta {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .auth-message {
+            text-align: center;
+            margin: 30px 0;
+            color: #555;
+        }
+
+        .auth-message a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        .auth-message a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 15px;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            width: 100%;
+        }
+
+        .g-recaptcha {
+            margin: 15px 0;
+            transform: scale(0.85);
+            transform-origin: left;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Отзывы о нашем сайте</h1>
+    <div class="auth-links">
+        {% if user.is_authenticated %}
+            <span>Привет, {{ user.username }}!</span>
+            <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" style="background: none; border: none; color: white; cursor: pointer; margin-left: 10px; font-size: 14px; text-decoration: none;">Выйти</button>
+            </form>
+            <a href="{% url 'profile' %}">Профиль</a>
+        {% else %}
+            <a href="{% url 'login' %}">Войти</a>
+            <a href="{% url 'register' %}">Регистрация</a>
+        {% endif %}
+    </div>
+</header>
+
+{% if messages %}
+<div class="messages" style="width: 90%; max-width: 600px; margin: 20px auto;">
+    {% for message in messages %}
+    <div style="padding: 10px; margin: 10px 0; border-radius: 4px;
+                background: {% if message.tags == 'error' %}#ffebee{% else %}#e8f5e9{% endif %};
+                color: {% if message.tags == 'error' %}#c62828{% else %}#2e7d32{% endif %};">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if user.is_authenticated %}
+<div class="form-container">
+    <h2>Оставьте свой отзыв</h2>
+    <form method="post" id="review-form">
+        {% csrf_token %}
+        <input type="hidden" name="form_type" value="review_form">
+
+        <label for="id_text">Ваш отзыв:</label>
+        <textarea name="text" id="id_text" rows="5" required></textarea>
+
+        <div class="g-recaptcha" data-sitekey="6LcDqh4rAAAAAFuXxB5JM2pwqidExQfo0WPezFFD"></div>
+
+        <button type="submit">Отправить отзыв</button>
+    </form>
+</div>
+{% else %}
+<div class="auth-message">
+    <p><a href="{% url 'login' %}">Войдите</a> или <a href="{% url 'register' %}">зарегистрируйтесь</a>, чтобы оставить отзыв</p>
+</div>
+{% endif %}
+
+<div class="reviews-container">
+    <h2>Последние отзывы:</h2>
+
+    {% for review in reviews %}
+    <div class="review">
+        <div class="review-header">
+            <div class="review-author">{{ review.name }}</div>
+            {% if user == review.user or user.is_superuser %}
+                <form action="{% url 'delete_review' review.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="delete-btn">Удалить</button>
+                </form>
+            {% endif %}
+        </div>
+        <div class="review-text">{{ review.text }}</div>
+        <div class="review-meta">
+            Опубликовано: {{ review.user.username }} | {{ review.created_at|date:"d.m.Y H:i" }}
+        </div>
+    </div>
+    {% empty %}
+    <div class="review">
+        <div class="review-text">Пока нет отзывов. Будьте первым!</div>
+    </div>
+    {% endfor %}
+</div>
+
+<footer>
+    <p>© {% now "Y" %} Отзывы о сайте. Все права защищены.</p>
+</footer>
+
+<script>
+document.getElementById('review-form').addEventListener('submit', function(e) {
+    if (grecaptcha.getResponse() === '') {
+        e.preventDefault();
+        alert('Пожалуйста, подтвердите, что вы не робот');
+        grecaptcha.execute();
+    }
+});
+</script>
+
+</body>
+</html>
