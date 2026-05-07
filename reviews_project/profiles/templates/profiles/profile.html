@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль пользователя</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, 'SF Pro Display', 'Inter', 'Helvetica Neue', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(160deg, #e8f5e9 0%, #c8e6c9 20%, #ffffff 40%, #e0f2f1 60%, #f1f8e9 80%, #e8f5e9 100%);
+            color: #2e3b2e;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* === Frutiger Aero animated background orbs === */
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.3;
+            z-index: 0;
+            animation: float 14s ease-in-out infinite;
+        }
+
+        body::before {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #a5d6a7, #66bb6a);
+            top: -200px;
+            right: -150px;
+        }
+
+        body::after {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #b2dfdb, #80cbc4);
+            bottom: -150px;
+            left: -100px;
+            animation-delay: -7s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(25px, -15px) scale(1.04); }
+            50% { transform: translate(-15px, 25px) scale(0.96); }
+            75% { transform: translate(15px, 15px) scale(1.02); }
+        }
+
+        /* === Decorative floating elements === */
+        .deco-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(50px);
+            opacity: 0.2;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .deco-orb-1 {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, #c8e6c9, #aed581);
+            top: 30%;
+            left: 5%;
+            animation: float 18s ease-in-out infinite reverse;
+        }
+
+        .deco-orb-2 {
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, #dcedc8, #c5e1a5);
+            bottom: 20%;
+            right: 10%;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        /* === Decorative SVG leaves === */
+        .leaf-decoration {
+            position: fixed;
+            z-index: 0;
+            opacity: 0.12;
+            pointer-events: none;
+        }
+
+        .leaf-1 { top: 5%; left: 3%; animation: leafFloat 25s ease-in-out infinite; }
+        .leaf-2 { top: 50%; right: 2%; animation: leafFloat 20s ease-in-out infinite reverse; }
+        .leaf-3 { bottom: 8%; left: 8%; animation: leafFloat 22s ease-in-out infinite; }
+
+        @keyframes leafFloat {
+            0%, 100% { transform: rotate(0deg) translateY(0); }
+            50% { transform: rotate(12deg) translateY(-15px); }
+        }
+
+        /* === Header (iOS Navigation Bar style) === */
+        header {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            padding: 0;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(30px) saturate(1.8);
+            -webkit-backdrop-filter: blur(30px) saturate(1.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(145deg, #43a047, #66bb6a, #81c784);
+            box-shadow: 0 2px 10px rgba(67, 160, 71, 0.25), inset 0 1px 0 rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-logo::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.3), transparent);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .header-logo svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2e3b2e;
+            letter-spacing: -0.3px;
+        }
+
+        /* === Auth links (iOS style pills) === */
+        .auth-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .auth-links span {
+            font-size: 14px;
+            color: #6b7c6b;
+            font-weight: 500;
+        }
+
+        .auth-links a {
+            color: #43a047;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: rgba(67, 160, 71, 0.08);
+            transition: all 0.2s;
+        }
+
+        .auth-links a:hover {
+            background: rgba(67, 160, 71, 0.15);
+            color: #2e7d32;
+        }
+
+        .logout-form {
+            display: inline;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #43a047;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            padding: 6px 14px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(244, 67, 54, 0.08);
+            color: #c62828;
+        }
+
+        /* === Delete avatar action === */
+        .avatar-current {
+            margin-top: 10px;
+            padding: 12px 14px;
+            border: 1px solid rgba(76, 175, 80, 0.14);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+        }
+
+        .avatar-current-file {
+            min-width: 0;
+            color: #4a5c4a;
+            font-size: 13px;
+            line-height: 1.35;
+        }
+
+        .avatar-current-file a {
+            color: #2e7d32;
+            font-weight: 600;
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .avatar-current-file a:hover {
+            color: #1b5e20;
+            text-decoration: underline;
+        }
+
+        .delete-avatar-btn {
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            min-height: 36px;
+            padding: 8px 14px;
+            border: 1px solid rgba(244, 67, 54, 0.18);
+            border-radius: 18px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.85), rgba(255, 235, 238, 0.75));
+            color: #c62828;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            transition: transform 0.2s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 10px rgba(244, 67, 54, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .delete-avatar-btn:hover {
+            transform: translateY(-1px);
+            background: linear-gradient(145deg, rgba(255, 245, 246, 0.95), rgba(255, 224, 229, 0.9));
+            border-color: rgba(244, 67, 54, 0.28);
+            box-shadow: 0 5px 16px rgba(244, 67, 54, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        .delete-avatar-btn:active {
+            transform: translateY(1px) scale(0.98);
+            box-shadow: 0 2px 8px rgba(244, 67, 54, 0.1);
+        }
+
+        .delete-avatar-icon {
+            font-size: 15px;
+            line-height: 1;
+        }
+
+        /* === Main Container === */
+        .profile-container {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            width: 90%;
+            max-width: 1100px;
+            margin: 40px auto;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        /* === Glass Cards for Sidebar and Content === */
+        .profile-sidebar,
+        .profile-content {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(40px) saturate(1.8);
+            -webkit-backdrop-filter: blur(40px) saturate(1.8);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 8px 32px rgba(46, 125, 50, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .profile-sidebar {
+            flex: 0 0 280px;
+            padding: 28px 20px;
+            text-align: center;
+        }
+
+        .profile-content {
+            flex: 1;
+            padding: 32px 30px;
+        }
+
+        .profile-sidebar:hover,
+        .profile-content:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(46, 125, 50, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        /* === Avatar Styles === */
+        .profile-avatar {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 18px;
+            border: 3px solid #ffffffcc;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.3);
+            display: block;
+            background: #e0e0e0;
+        }
+
+        .avatar-container {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            margin: 0 auto 18px;
+            border: 3px solid rgba(255,255,255,0.7);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            font-weight: 600;
+            color: #4a5c4a;
+            background: linear-gradient(145deg, #d4e6d4, #c8dfc8);
+            overflow: hidden;
+        }
+
+        .avatar-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at 30% 30%, #e8f5e9, #c8e6c9);
+        }
+
+        .profile-sidebar h3 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #2e3b2e;
+            margin-bottom: 12px;
+            letter-spacing: -0.3px;
+        }
+
+        .profile-info {
+            margin-top: 16px;
+            text-align: left;
+            border-top: 1px solid rgba(76, 175, 80, 0.15);
+            padding-top: 16px;
+        }
+
+        .profile-info p {
+            margin: 12px 0;
+            font-size: 0.9rem;
+            color: #4a5c4a;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.4;
+        }
+
+        .profile-info strong {
+            font-weight: 600;
+            color: #2e7d32;
+            min-width: 110px;
+        }
+
+        /* === Form Styles (iOS style) === */
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #4a5c4a;
+            letter-spacing: 0.2px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1.5px solid rgba(76, 175, 80, 0.2);
+            border-radius: 14px;
+            font-size: 16px;
+            font-family: inherit;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            color: #2e3b2e;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            outline: none;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #43a047;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 0 0 4px rgba(67, 160, 71, 0.1), 0 2px 8px rgba(67, 160, 71, 0.08);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #a0b0a0;
+        }
+
+        /* File input styling */
+        .form-group input[type="file"] {
+            padding: 12px 12px;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Error messages */
+        .errorlist {
+            list-style: none;
+            padding: 0;
+            margin: 8px 0 0 0;
+        }
+
+        .errorlist li {
+            background: rgba(244, 67, 54, 0.08);
+            border: 1px solid rgba(244, 67, 54, 0.15);
+            border-radius: 12px;
+            padding: 8px 14px;
+            color: #c62828;
+            font-size: 13px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            margin-top: 6px;
+        }
+
+        /* === Primary Button === */
+        .btn {
+            width: 100%;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: inherit;
+            color: white;
+            cursor: pointer;
+            background: linear-gradient(145deg, #43a047, #66bb6a);
+            box-shadow: 0 4px 16px rgba(67, 160, 71, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), transparent);
+            border-radius: 14px 14px 0 0;
+            pointer-events: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 24px rgba(67, 160, 71, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(1px) scale(0.98);
+            box-shadow: 0 2px 8px rgba(67, 160, 71, 0.2);
+        }
+
+        /* === Messages (notifications) === */
+        .messages {
+            width: 90%;
+            max-width: 1100px;
+            margin: 20px auto 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .alert {
+            padding: 14px 18px;
+            margin-bottom: 12px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .alert-success {
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.15);
+            color: #2e7d32;
+        }
+
+        .alert-error,
+        .alert-danger {
+            background: rgba(244, 67, 54, 0.08);
+            border: 1px solid rgba(244, 67, 54, 0.12);
+            color: #c62828;
+        }
+
+        .alert-info {
+            background: rgba(33, 150, 243, 0.08);
+            border: 1px solid rgba(33, 150, 243, 0.12);
+            color: #1565c0;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* === Footer === */
+        footer {
+            position: relative;
+            z-index: 1;
+            padding: 20px 24px;
+            text-align: center;
+            font-size: 13px;
+            color: #90a090;
+            border-top: 1px solid rgba(76, 175, 80, 0.08);
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            margin-top: 40px;
+        }
+
+        /* === Responsive === */
+        @media (max-width: 768px) {
+            .profile-container {
+                flex-direction: column;
+                width: 92%;
+                margin: 24px auto;
+                gap: 20px;
+            }
+
+            .profile-sidebar {
+                flex: auto;
+                width: 100%;
+            }
+
+            .header-inner {
+                flex-direction: column;
+                gap: 12px;
+                padding: 14px 20px;
+            }
+
+            .auth-links {
+                justify-content: center;
+            }
+
+            .profile-info p {
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .profile-info strong {
+                min-width: auto;
+            }
+
+            .avatar-current {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .delete-avatar-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-sidebar, .profile-content {
+                padding: 20px 18px;
+            }
+
+            .avatar-container, .profile-avatar {
+                width: 110px;
+                height: 110px;
+            }
+
+            .avatar-container {
+                font-size: 3rem;
+            }
+
+            .profile-sidebar h3 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animated background orbs -->
+    <div class="deco-orb deco-orb-1"></div>
+    <div class="deco-orb deco-orb-2"></div>
+
+    <!-- Decorative leaf elements -->
+    <svg class="leaf-decoration leaf-1" width="130" height="130" viewBox="0 0 120 120">
+        <ellipse cx="60" cy="60" rx="40" ry="55" fill="#66bb6a" transform="rotate(-25 60 60)"/>
+        <line x1="30" y1="80" x2="90" y2="40" stroke="#43a047" stroke-width="2"/>
+    </svg>
+    <svg class="leaf-decoration leaf-2" width="100" height="100" viewBox="0 0 120 120">
+        <ellipse cx="60" cy="60" rx="35" ry="50" fill="#80cbc4" transform="rotate(30 60 60)"/>
+        <line x1="35" y1="75" x2="85" y2="45" stroke="#4db6ac" stroke-width="2"/>
+    </svg>
+    <svg class="leaf-decoration leaf-3" width="80" height="80" viewBox="0 0 120 120">
+        <ellipse cx="60" cy="60" rx="30" ry="45" fill="#aed581" transform="rotate(-10 60 60)"/>
+        <line x1="38" y1="72" x2="82" y2="48" stroke="#9ccc65" stroke-width="2"/>
+    </svg>
+
+    <!-- iOS-style navigation header -->
+    <header>
+        <div class="header-inner">
+            <div class="header-left">
+                <div class="header-logo">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+                    </svg>
+                </div>
+                <span class="header-title">Мой профиль</span>
+            </div>
+
+            <div class="auth-links">
+                {% if user.is_authenticated %}
+                    <span>Привет, {{ user.username }}!</span>
+                    <a href="{% url 'review_list' %}">Отзывы</a>
+                    <form action="{% url 'logout' %}" method="post" class="logout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="logout-btn">Выйти</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}">Войти</a>
+                    <a href="{% url 'register' %}">Регистрация</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- Django Messages -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Profile Content -->
+    <div class="profile-container">
+        <!-- Sidebar: avatar & info -->
+        <div class="profile-sidebar">
+            {% if user.profile.avatar %}
+                <img src="{{ user.profile.avatar.url }}" alt="Аватар" class="profile-avatar">
+            {% else %}
+                <div class="avatar-container">
+                    <div class="avatar-placeholder">
+                        {{ user.username|first|upper }}
+                    </div>
+                </div>
+            {% endif %}
+            <h3>{{ user.username }}</h3>
+            <div class="profile-info">
+                {% if user.profile.bio %}
+                    <p><strong>📝 О себе:</strong> {{ user.profile.bio }}</p>
+                {% endif %}
+                {% if user.profile.location %}
+                    <p><strong>📍 Местоположение:</strong> {{ user.profile.location }}</p>
+                {% endif %}
+                {% if user.profile.birth_date %}
+                    <p><strong>🎂 Дата рождения:</strong> {{ user.profile.birth_date }}</p>
+                {% endif %}
+                {% if not user.profile.bio and not user.profile.location and not user.profile.birth_date %}
+                    <p><em>Информация не заполнена</em></p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Main content: edit form -->
+        <div class="profile-content">
+            <h2 style="font-size: 1.8rem; font-weight: 700; color: #2e3b2e; margin-bottom: 24px;">Редактирование профиля</h2>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="id_avatar">🖼️ Аватар:</label>
+                    {% if user.profile.avatar %}
+                        <div class="avatar-current">
+                            <span class="avatar-current-file">
+                                Сейчас:
+                                <a href="{{ user.profile.avatar.url }}" target="_blank" rel="noopener">{{ user.profile.avatar.name }}</a>
+                            </span>
+                            <button type="submit" form="delete-avatar-form" class="delete-avatar-btn" onclick="return confirm('Вы уверены, что хотите удалить аватар?');">
+                                <span class="delete-avatar-icon" aria-hidden="true">🗑️</span>
+                                <span>Удалить аватар</span>
+                            </button>
+                        </div>
+                    {% endif %}
+                    {{ form.avatar }}
+                    {% if form.avatar.errors %}
+                        <ul class="errorlist">{{ form.avatar.errors }}</ul>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_bio">📄 О себе:</label>
+                    {{ form.bio }}
+                    {% if form.bio.errors %}
+                        <ul class="errorlist">{{ form.bio.errors }}</ul>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_location">📍 Местоположение:</label>
+                    {{ form.location }}
+                    {% if form.location.errors %}
+                        <ul class="errorlist">{{ form.location.errors }}</ul>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_birth_date">🎂 Дата рождения:</label>
+                    {{ form.birth_date }}
+                    {% if form.birth_date.errors %}
+                        <ul class="errorlist">{{ form.birth_date.errors }}</ul>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn">Сохранить изменения</button>
+            </form>
+            {% if user.profile.avatar %}
+                <form method="post" action="{% url 'delete_avatar' %}" id="delete-avatar-form">
+                    {% csrf_token %}
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <footer>
+        <p>© {% now "Y" %} Профиль пользователя. Все права защищены.</p>
+    </footer>
+
+</body>
+</html>
